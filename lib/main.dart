@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_redux/flutter_redux.dart';
 import 'package:redux/redux.dart';
-import 'switchWalletDrawer.dart';
 import 'redux/index.dart';
 import 'redux/actions.dart';
+import 'containers/index.dart';
 
 void main() {
   final store = globalState;
@@ -12,55 +12,62 @@ void main() {
 
 class MyApp extends StatelessWidget {
   final Store store;
-  final GlobalKey<ScaffoldState> _key = new GlobalKey<ScaffoldState>();
-  _openDrawer () {
-    _key.currentState.openDrawer();
-  }
 
   MyApp({Key key, this.store}) : super(key: key);
+
+  setCurrentPageIndex (int index) {
+    store.dispatch({'type': Actions.SetCurrentPageIndex, 'data': index});
+  }
 
   @override
   Widget build(BuildContext context) {
     return new StoreProvider<dynamic> (
       store: store,
       child: MaterialApp(
-        title: 'Container',
+        title: '钱包APP',
         theme: ThemeData(
           primaryColor: Colors.white
         ),
         home: new Scaffold(
-          key: _key,
-          drawer: MyDrawer(),
-          appBar: AppBar(
-            leading: IconButton(
-              icon: Icon(
-                Icons.menu
-              ),
-              onPressed: _openDrawer,
-            ),
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: <Widget>[
-                Text('redux')
-              ],
-            ),
+          backgroundColor: Color(0xFFf0f2f5),
+          body: new StoreConnector<dynamic, int>(
+            converter: (index) => store.state.currentMainPage.currentPageIndex,//转换从redux拿回来的值
+            builder: (context, index) {
+              print(index);
+              return IndexedStack(
+                index: index,
+                children: mainPages
+              );
+            },
+          ), 
+          bottomNavigationBar: new StoreConnector<dynamic, int>(
+            converter: (index) => store.state.currentMainPage.currentPageIndex,
+            builder: (context, index) {
+              return BottomNavigationBar(
+                fixedColor: Color(0xFF3B3B43),//当前路由被选中的颜色
+                currentIndex: index,
+                onTap: setCurrentPageIndex, // 触发redux，选择当前页面index
+                items: [
+                  BottomNavigationBarItem(
+                    backgroundColor: Color(0xFF8C8C8C),
+                    icon: new Icon(Icons.home),
+                    title: new Text('Home'),
+                  ),
+                  BottomNavigationBarItem(
+                    backgroundColor: Color(0xFF8C8C8C),
+                    icon: new Icon(Icons.mail),
+                    title: new Text('Messages'),
+                  ),
+                  BottomNavigationBarItem(
+                    backgroundColor: Color(0xFF8C8C8C),
+                    icon: Icon(Icons.person),
+                    title: Text('Profile')
+                  )
+                ],
+              );
+            },
           ),
-          body: Container(
-            color: Colors.red,
-            child: Row(
-              children: <Widget>[
-                new StoreConnector<dynamic, String>(
-                  converter: (count) => store.state.transactionRecord.count.toString(),
-                  builder: (context, count) {
-                    return new Text(
-                      count,
-                      style: Theme.of(context).textTheme.display1,
-                    );
-                  },
-                )
-              ],
-            ),
-          ),
+            
           floatingActionButton: new StoreConnector<dynamic, VoidCallback>(
             converter: (store) {
               // Return a `VoidCallback`, which is a fancy name for a function
@@ -76,7 +83,9 @@ class MyApp extends StatelessWidget {
               );
             },
           ),
-        )
+        ),
+        routes: <String, WidgetBuilder> {
+        },
         /*decoration: BoxDecoration(
           gradient: LinearGradient(//背景渐变
             colors: [Colors.lightBlue, Colors.greenAccent,Colors.purple]

@@ -15,5 +15,9 @@ AppState mainReducer(AppState state, dynamic action){
     state.transactionRecord.count += 1;
   }
 
+  if (action['type'] == Actions.SetCurrentPageIndex) {
+    state.currentMainPage.currentPageIndex = action['data'];
+  }
+
   return state;
 }
