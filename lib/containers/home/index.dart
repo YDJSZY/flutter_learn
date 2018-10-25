@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import '../../components/switchWalletDrawer.dart';
+import '../../pages/noWallet/index.dart';
 
 class Home extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
-    // TODO: implement createState
     return _Home();
   }
 }
@@ -23,8 +23,8 @@ class _Home extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
 
   @override
   Widget build(BuildContext context) {
-      // TODO: implement build
-    return Scaffold(
+    final noAccountWidget =  NoWallet();
+    final hasAccountWidget =  Scaffold(
       key: _key,
       drawer: MyDrawer(),
       backgroundColor: Color(0xFFf0f2f5),
@@ -83,6 +83,7 @@ class _Home extends State<Home> with AutomaticKeepAliveClientMixin<Home> {
         )
       )
     );
+    return noAccountWidget;
   }
 
   @override
