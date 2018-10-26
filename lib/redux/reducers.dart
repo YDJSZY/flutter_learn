@@ -19,5 +19,9 @@ AppState mainReducer(AppState state, dynamic action){
     state.currentMainPage.currentPageIndex = action['data'];
   }
 
+  if (action['type'] == Actions.SetSelectAccount) {
+    state.accounts.selectAccount = action['data'];
+  }
+
   return state;
 }

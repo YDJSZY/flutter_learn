@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-//import 'package:flutter_svg/flutter_svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 
 class NoWallet extends StatelessWidget {
   @override
@@ -19,12 +19,12 @@ class NoWallet extends StatelessWidget {
           children: <Widget>[
             Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              children:<Widget>[
-                Image.asset(
-                  'images/wallet.png',
+              children: <Widget>[
+                new SvgPicture.asset(
+                  'images/wallet-logo.svg',
+                  color: Colors.yellow,
                   width: 116.0,
                   height: 131.0,
-                  fit: BoxFit.cover,//BoxFit.cover 告诉框架，图像应该尽可能小，但覆盖整个渲染框
                 ),
                 Padding(
                   padding: EdgeInsets.all(13.0),
@@ -39,19 +39,40 @@ class NoWallet extends StatelessWidget {
               ]
             ),
             Padding(
-              padding: EdgeInsets.fromLTRB(75.0, 0, 75.0, 170.0),
-              child: RaisedButton(
-                padding: EdgeInsets.only(top: 13.0, bottom: 13.0),
-                onPressed: () => {},
-                color: Color(0xFF3B3B43),
-                child: Text(
-                  '创建钱包',
-                  style: TextStyle(
-                    color: Colors.white
-                  )
-                ),
-                shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(5.0)),
-              ),
+              padding: EdgeInsets.fromLTRB(75.0, 0.0, 75.0, 170.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(bottom: 20.0),
+                    child: RaisedButton(
+                      padding: EdgeInsets.only(top: 13.0, bottom: 13.0),
+                      onPressed: () => {},
+                      color: Color(0xFF3B3B43),
+                      child: Text(
+                        '创建钱包',
+                        style: TextStyle(
+                          color: Colors.white
+                        )
+                      ),
+                      shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(5.0)),
+                    ),
+                  ),
+                  RaisedButton(
+                    padding: EdgeInsets.only(top: 13.0, bottom: 13.0),
+                    onPressed: () => {},
+                    color: Color(0xFFAB9374),
+                    child: Text(
+                      '导入钱包',
+                      style: TextStyle(
+                        color: Colors.white
+                      )
+                    ),
+                    shape: new RoundedRectangleBorder(borderRadius: new BorderRadius.circular(5.0)),
+                  ),
+                ]
+              )
+              ,
             )
             
           ]

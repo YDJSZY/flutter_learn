@@ -1,6 +1,5 @@
 class MyInfo {
   Map infos;
-
   MyInfo(this.infos);
 }
 
@@ -15,14 +14,23 @@ class CurrentMainPage {
   CurrentMainPage({this.currentPageIndex});
 }
 
+class Accounts {
+  String selectAccount = '';
+  List accountNames = [];
+  Map accountsDetail = {};
+
+  Accounts({this.selectAccount: '', this.accountNames, this.accountsDetail});
+}
+
 class AppState {
   MyInfo myInfo;
   TransactionRecord transactionRecord;
   CurrentMainPage currentMainPage;
-
+  Accounts accounts;
   AppState({
     this.myInfo, 
     this.transactionRecord, 
-    this.currentMainPage
+    this.currentMainPage,
+    this.accounts
   });
 }

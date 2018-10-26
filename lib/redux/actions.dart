@@ -2,5 +2,6 @@ enum Actions {
   SetMyInfo,
   SetTransactionRecord,
   SetCount,
-  SetCurrentPageIndex
+  SetCurrentPageIndex,
+  SetSelectAccount
 }
