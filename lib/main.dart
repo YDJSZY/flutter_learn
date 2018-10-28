@@ -5,8 +5,8 @@ import 'redux/index.dart';
 import 'redux/actions.dart';
 import 'containers/index.dart';
 
-void main() {
-  final store = globalState;
+void main() async {
+  final store = await init();
   runApp(new MyApp(store: store));//传入store
 }
 
