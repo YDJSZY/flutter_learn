@@ -47,7 +47,9 @@ class NoWallet extends StatelessWidget {
                     padding: EdgeInsets.only(bottom: 20.0),
                     child: RaisedButton(
                       padding: EdgeInsets.only(top: 13.0, bottom: 13.0),
-                      onPressed: () => {},
+                      onPressed: () {
+                        Navigator.of(context).pushNamed('/create-wallet');//跳转到创建钱包
+                      },
                       color: Color(0xFF3B3B43),
                       child: Text(
                         '创建钱包',

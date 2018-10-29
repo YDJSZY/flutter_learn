@@ -23,6 +23,7 @@ dependencies:
   flutter_redux: ^0.5.2
   flutter_svg: ^0.6.1
   shared_preferences:
+  dio: ^1.0.6
 
 dev_dependencies:
   flutter_test:

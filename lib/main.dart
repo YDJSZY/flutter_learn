@@ -4,6 +4,7 @@ import 'package:redux/redux.dart';
 import 'redux/index.dart';
 import 'redux/actions.dart';
 import 'containers/index.dart';
+import 'routes.dart';
 
 void main() async {
   final store = await init();
@@ -84,8 +85,7 @@ class MyApp extends StatelessWidget {
             },
           ),
         ),
-        routes: <String, WidgetBuilder> {
-        },
+        routes: routes,//静态路由
         /*decoration: BoxDecoration(
           gradient: LinearGradient(//背景渐变
             colors: [Colors.lightBlue, Colors.greenAccent,Colors.purple]
