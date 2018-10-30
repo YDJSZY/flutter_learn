@@ -1,7 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:dio/dio.dart';
+import '../../components/toaster/index.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
+
 Dio dio = new Dio();
+
+String accountNameValidText (String type) {
+  print(type);
+  if (type == 'accountUseful') {
+    return '账户名可用';
+  }
+  if (type == 'accountUnUseful') {
+    return '账户名已存在';
+  }
+  if (type == 'invalidateAccount') {
+    return '账户名只能是a~z数字1~5组合，长度12位';
+  }
+  return '';
+}
 
 class CreateWallet extends StatefulWidget {
   @override
@@ -9,8 +26,16 @@ class CreateWallet extends StatefulWidget {
 }
 class CreateWalletState extends State<CreateWallet> {
   bool isAgree = false;
+  bool passwordError = false;
+  bool confirmPasswordError = false;
+  String accountNameStatus = '';
   String accountName = '';
+  String password = '';
+  String confirmPassword = '';
+  String accountUseful = '账户名可用';
+  String accountUnUseful = '账户名已存在';
   final TapGestureRecognizer agreeProtocolTap = new TapGestureRecognizer();
+  
   @override
   void initState() {
     super.initState();
@@ -23,14 +48,84 @@ class CreateWalletState extends State<CreateWallet> {
   }
 
   checkAccountName () async {
+    if (accountName == '') return;
     final res = await dio.post('http://45.76.11.245:7001/api/v1/validAccountName', data: {'account_name': accountName});
-    print(res);
+    print(res.data);
+    if (res.data['success']) {
+      setState(() {
+        accountNameStatus = 'accountUseful';
+      });
+    } else {
+      setState(() {
+        accountNameStatus = 'accountUnUseful';
+      });
+    }
   }
 
-  accountNameOnChange (e) {
+  accountNameOnChange (val) {
     setState(() {
-      accountName = e;
+      accountName = val;
+      bool validateRes = validAccountName();
+      if (accountName == '') {
+        accountNameStatus = '';
+      } else if (validateRes) {
+        accountNameStatus = '';
+      } else {
+        accountNameStatus = 'invalidateAccount';
+      }
     });
+  }
+
+  bool validAccountName () {
+    RegExp exp = new RegExp(r'^[1-5a-z]{12,12}$');
+    final regRes = exp.hasMatch(accountName);
+    if (regRes) return true;
+    if (accountName != '' && !regRes) return false;
+    return false;
+  }
+
+  passwordOnChange (val) {
+    setState(() {
+      password = val;
+      if (val != '' && val.length < 8) {
+        passwordError = true;
+      } else {
+        passwordError = false;
+      }
+      validateConfirmPassword ();
+    });
+  }
+
+  validateConfirmPassword () {
+    var error = false;
+    if (password != '' && confirmPassword != '' && password != confirmPassword) {
+      error = true;
+    } else {
+      error = false;
+    }
+    setState(() {
+      confirmPasswordError = error;
+    });
+  }
+
+  confirmPasswordOnChange (val) {
+    setState(() {
+      confirmPassword = val;
+      validateConfirmPassword();
+    });
+  }
+
+  gotoBackup () async {
+    print(111);
+    await checkAccountName();
+    print(666);
+    if (accountNameStatus == 'accountUnUseful' || passwordError || confirmPasswordError) {
+      Toaster.error(msg: '输入有误');
+    }
+  }
+
+  bool createBtnDiasbled () {
+    return isAgree && accountName != '' && password != '' && confirmPassword != '';
   }
 
   @override
@@ -81,9 +176,12 @@ class CreateWalletState extends State<CreateWallet> {
               child: Column(
                 children: <Widget>[
                   Container(
+                    margin: EdgeInsets.only(top: 13.0),
                     height: 53.0,
                     alignment: Alignment.centerLeft,
                     child: Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: <Widget>[
                         Expanded(
                           child: TextField(
@@ -94,15 +192,20 @@ class CreateWalletState extends State<CreateWallet> {
                             decoration: new InputDecoration(
                               contentPadding: EdgeInsets.only(bottom: 13.0),
                               labelText: "钱包名称",
-                              border: InputBorder.none
+                              border: InputBorder.none,
+                              errorText: accountNameValidText(accountNameStatus),
+                              errorStyle: TextStyle(
+                                color: accountNameStatus == 'accountUseful' ? Color(0xFF06c288) : Color(0xFFF03333),
+                              )
                             ),
                             autofocus: false,
                             onChanged: accountNameOnChange,
+                            maxLength: 12,
                           )
                         ),
                         RaisedButton(
                           padding: EdgeInsets.only(top: 8.0, right: 13.0, bottom: 8.0, left: 13.0),
-                          onPressed: checkAccountName,
+                          onPressed: validAccountName() ? checkAccountName : null,
                           color: Color(0xFF3B3B43),
                           child: Text(
                             '检测账户名',
@@ -125,6 +228,7 @@ class CreateWalletState extends State<CreateWallet> {
                     )
                   ),
                   Container(
+                    margin: EdgeInsets.only(top: 18.0),
                     height: 53.0,
                     alignment: Alignment.centerLeft,
                     child: Row(
@@ -138,10 +242,12 @@ class CreateWalletState extends State<CreateWallet> {
                             decoration: new InputDecoration(
                               contentPadding: EdgeInsets.only(bottom: 13.0),
                               labelText: "钱包密码",
-                              border: InputBorder.none
+                              border: InputBorder.none,
+                              errorText: passwordError ? '请输入至少8位字符，建议混合大小写字母、数字、符号' : ''
                             ),
                             autofocus: false,
                             obscureText: true,
+                            onChanged: passwordOnChange,
                           )
                         ),
                       ],
@@ -156,6 +262,7 @@ class CreateWalletState extends State<CreateWallet> {
                     )
                   ),
                   Container(
+                    margin: EdgeInsets.only(top: 18.0),
                     height: 53.0,
                     alignment: Alignment.centerLeft,
                     child: Row(
@@ -169,10 +276,12 @@ class CreateWalletState extends State<CreateWallet> {
                             decoration: new InputDecoration(
                               contentPadding: EdgeInsets.only(bottom: 13.0),
                               labelText: "确认密码",
-                              border: InputBorder.none
+                              border: InputBorder.none,
+                              errorText: confirmPasswordError ? '密码不一致' : ''
                             ),
                             autofocus: false,
                             obscureText: true,
+                            onChanged: confirmPasswordOnChange,
                           )
                         ),
                       ],
@@ -187,6 +296,7 @@ class CreateWalletState extends State<CreateWallet> {
                     )
                   ),
                   Container(
+                    margin: EdgeInsets.only(top: 10.0),
                     child: Row(  
                       mainAxisAlignment: MainAxisAlignment.start,
                       textDirection: TextDirection.ltr,
@@ -226,9 +336,7 @@ class CreateWalletState extends State<CreateWallet> {
                       children: [
                         RaisedButton(
                           padding: EdgeInsets.only(top: 16.0, bottom: 16.0),
-                          onPressed: () {
-                            Navigator.of(context).pushNamed('/create-wallet');//跳转到创建钱包
-                          },
+                          onPressed: createBtnDiasbled() ? gotoBackup : null,
                           color: Color(0xFF3B3B43),
                           child: Text(
                             '创建钱包',
@@ -241,7 +349,15 @@ class CreateWalletState extends State<CreateWallet> {
                         ),
                       ]
                     )
+                  ),
+                  Stack(
+                    children: <Widget>[
+                      SpinKitFadingCircle(
+                        color: Color(0xFF3B3B43)
+                      ),
+                    ],
                   )
+                  
                 ]
               )
             )

@@ -24,6 +24,8 @@ dependencies:
   flutter_svg: ^0.6.1
   shared_preferences:
   dio: ^1.0.6
+  fluttertoast: ^2.0.9
+  flutter_spinkit: "^2.1.0"
 
 dev_dependencies:
   flutter_test:
