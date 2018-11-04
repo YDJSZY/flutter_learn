@@ -22,7 +22,6 @@ class NoWallet extends StatelessWidget {
               children: <Widget>[
                 new SvgPicture.asset(
                   'images/wallet-logo.svg',
-                  //color: Colors.yellow,
                   width: 116.0,
                   height: 131.0,
                 ),

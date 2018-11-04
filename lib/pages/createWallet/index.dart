@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:dio/dio.dart';
 import '../../components/toaster/index.dart';
-import 'package:flutter_spinkit/flutter_spinkit.dart';
+import '../backupPrivateKey/index.dart';
+//import 'package:flutter_spinkit/flutter_spinkit.dart';
 
 Dio dio = new Dio();
 
 String accountNameValidText (String type) {
-  print(type);
   if (type == 'accountUseful') {
     return '账户名可用';
   }
@@ -49,8 +49,7 @@ class CreateWalletState extends State<CreateWallet> {
 
   checkAccountName () async {
     if (accountName == '') return;
-    final res = await dio.post('http://45.76.11.245:7001/api/v1/validAccountName', data: {'account_name': accountName});
-    print(res.data);
+    final res = await dio.post('http://192.168.1.2:7001/api/v1/validAccountName', data: {'account_name': accountName});
     if (res.data['success']) {
       setState(() {
         accountNameStatus = 'accountUseful';
@@ -60,6 +59,11 @@ class CreateWalletState extends State<CreateWallet> {
         accountNameStatus = 'accountUnUseful';
       });
     }
+  }
+
+  getKeys () async {
+    final res = await dio.get('http://192.168.1.2:7001/api/v1/keys');
+    return res.data['data'];
   }
 
   accountNameOnChange (val) {
@@ -115,13 +119,16 @@ class CreateWalletState extends State<CreateWallet> {
     });
   }
 
-  gotoBackup () async {
-    print(111);
+  gotoBackup () async { //进入备份钱包
     await checkAccountName();
-    print(666);
     if (accountNameStatus == 'accountUnUseful' || passwordError || confirmPasswordError) {
-      Toaster.error(msg: '输入有误');
+      return Toaster.error(msg: '输入有误');
     }
+    var keys = await this.getKeys();//获取公钥和私钥
+    print(keys);
+    Navigator.of(context).push(new MaterialPageRoute(builder: (_) {
+      return new BackupKeys(keys, accountName, password);
+    }));
   }
 
   bool createBtnDiasbled () {
@@ -350,14 +357,13 @@ class CreateWalletState extends State<CreateWallet> {
                       ]
                     )
                   ),
-                  Stack(
+                  /*Stack(
                     children: <Widget>[
                       SpinKitFadingCircle(
                         color: Color(0xFF3B3B43)
                       ),
                     ],
-                  )
-                  
+                  )*/
                 ]
               )
             )

@@ -3,5 +3,7 @@ enum Actions {
   SetTransactionRecord,
   SetCount,
   SetCurrentPageIndex,
-  SetSelectAccount
+  SetSelectAccount,
+  SetSharePresString,
+  SetSharePresMap
 }
