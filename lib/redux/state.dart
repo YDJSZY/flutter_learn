@@ -27,7 +27,6 @@ class Accounts {
 
 class SharePres {
   SharedPreferences sharePres;
-
   SharePres({this.sharePres});
 
   setStringData (key, value) async {
